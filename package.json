@@ -6,9 +6,6 @@
   "author": "Gabriele Biagini <gbiagini97@gmail.com>",
   "license": "MIT",
   "private": true,
-  "scripts": {
-    "test": "cd api && yarn export-env && yarn test-ci"
-  },
   "dependencies": {
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.848.0",
