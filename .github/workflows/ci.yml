@@ -28,13 +28,13 @@ jobs:
     - name: Serverless Deploy 
       uses: serverless/github-action@v3.1
       with:
-        args: deploy --stage ${{ GITHUB_RUN_ID }}
+        args: deploy --stage ${GITHUB_RUN_ID}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     
     - name: Perform tests
-      run: yarn test ${{ GITHUB_RUN_ID }}
+      run: yarn test ${GITHUB_RUN_ID}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -42,7 +42,7 @@ jobs:
     - name: Serverless Remove
       uses: serverless/github-action@v3.1
       with:
-        args: remove --stage ${{ GITHUB_RUN_ID }}
+        args: remove --stage ${GITHUB_RUN_ID}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
