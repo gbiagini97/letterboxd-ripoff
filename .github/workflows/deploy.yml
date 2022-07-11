@@ -3,7 +3,9 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - dev
+      - staging
+      - prod
 
 jobs:
   deploy:
@@ -29,7 +31,7 @@ jobs:
       run: yarn install --frozen-lockfile
 
     - name: Serverless deploy Deploy on ephemeral environment
-      run: serverless deploy
+      run: serverless deploy --stage ${{ github.ref_name }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
