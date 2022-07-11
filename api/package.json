@@ -1,10 +1,17 @@
 {
-  "name": "letterboxd-ripoff",
+  "name": "letterboxd-ripoff-api",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@github.com:gbiagini97/letterboxd-ripoff.git",
   "author": "Gabriele Biagini <gbiagini97@gmail.com>",
   "license": "MIT",
+  "private": true,
+  "scripts": {
+    "export-env": "node _scripts/export-env.js",
+    "deploy": "sls deploy",
+    "remove": "sls remove",
+    "test": "jest"
+  },
   "dependencies": {
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.848.0",
@@ -12,6 +19,9 @@
     "serverless": "^3.19.0"
   },
   "devDependencies": {
+    "@aws-sdk/client-cloudformation": "^3.121.0",
+    "@aws-sdk/client-dynamodb": "^3.121.0",
+    "@aws-sdk/util-dynamodb": "^3.121.0",
     "@serverless/compose": "^1.2.4"
   }
 }

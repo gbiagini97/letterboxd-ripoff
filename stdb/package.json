@@ -1,10 +1,16 @@
 {
-  "name": "letterboxd-ripoff",
+  "name": "letterboxd-ripoff-stdb",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@github.com:gbiagini97/letterboxd-ripoff.git",
   "author": "Gabriele Biagini <gbiagini97@gmail.com>",
   "license": "MIT",
+  "private": true,
+  "scripts": {
+    "export-env": "node _scripts/export-env.js",
+    "deploy": "sls deploy",
+    "remove": "sls remove"
+  },
   "dependencies": {
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.848.0",

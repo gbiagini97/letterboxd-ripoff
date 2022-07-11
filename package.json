@@ -5,14 +5,25 @@
   "repository": "git@github.com:gbiagini97/letterboxd-ripoff.git",
   "author": "Gabriele Biagini <gbiagini97@gmail.com>",
   "license": "MIT",
+  "private": true,
   "dependencies": {
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.848.0",
+    "babel-loader": "^8.2.5",
+    "chance": "^1.1.8",
     "dotenv": "^16.0.1",
-    "serverless": "^3.19.0"
+    "serverless": "^3.19.0",
+    "serverless-webpack": "^5.7.1",
+    "webpack": "^5.73.0",
+    "webpack-node-externals": "^3.0.0"
   },
   "devDependencies": {
-    "@serverless/compose": "^1.2.4"
+    "@serverless/compose": "^1.2.4",
+    "@aws-sdk/client-cloudformation": "^3.121.0",
+    "@aws-sdk/client-dynamodb": "^3.121.0",
+    "@aws-sdk/util-dynamodb": "^3.121.0",
+    "jest": "^28.1.2",
+    "serverless-iam-roles-per-function": "^3.2.0"
   },
   "workspaces": [
     "api",
