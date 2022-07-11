@@ -1,9 +1,6 @@
 "use strict";
-const {
-  DynamoDBClient,
-  PutItemCommand,
-} = require("@aws-sdk/client-dynamodb");
-const { marshall } = require("@aws-sdk/util-dynamodb");
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
 const create = async (event) => {
   const body = JSON.parse(event.body);
 
@@ -32,13 +29,15 @@ const create = async (event) => {
     listsCount: 0,
   };
 
+  // init the client
   const client = new DynamoDBClient();
+  const doc = DynamoDBDocumentClient.from(client);
 
   try {
-    const res = await client.send(
-      new PutItemCommand({
+    const res = await doc.send(
+      new PutCommand({
         TableName: process.env.SINGLE_TABLE_ID,
-        Item: marshall(item),
+        Item: item,
         ConditionExpression:
           "attribute_not_exists(PK) AND attribute_not_exists(SK)",
       })

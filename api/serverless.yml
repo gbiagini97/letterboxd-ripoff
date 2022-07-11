@@ -16,14 +16,13 @@ provider:
   environment:
     STDB_CF_STACK: ${param:STDB_CF_STACK}
 
-
 custom:
   webpack:
     webpackConfig: webpack.config.js
     packager: "yarn"
     includeModules:
       forceExclude:
-          - aws-sdk
+        - aws-sdk
 
 functions:
   home:
@@ -44,6 +43,18 @@ functions:
           - dynamodb:PutItem
         Resource: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}
 
+  getUser:
+    handler: src/user.get
+    events:
+      - httpApi: "GET /users/{userID}"
+    environment:
+      SINGLE_TABLE_ID: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableID}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:Query
+        Resource: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}
+
   ### FILM
   createFilm:
     handler: src/film.create
@@ -55,6 +66,20 @@ functions:
       - Effect: "Allow"
         Action:
           - dynamodb:PutItem
+        Resource: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}
+
+  ### REVIEWS
+  createReview:
+    handler: src/review.create
+    events:
+      - httpApi: "POST /users/{userID}/reviews"
+    environment:
+      SINGLE_TABLE_ID: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableID}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:ConditionCheckItem
         Resource: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}
 
 resources:

@@ -1,9 +1,8 @@
 "use strict";
 const {
   DynamoDBClient,
-  PutItemCommand,
 } = require("@aws-sdk/client-dynamodb");
-const { marshall } = require("@aws-sdk/util-dynamodb");
+const { DynamoDBDocumentClient, QueryCommand, PutCommand } = require("@aws-sdk/lib-dynamodb"); 
 
 const register = async (event) => {
   const body = JSON.parse(event.body);
@@ -46,12 +45,13 @@ const register = async (event) => {
 
   // init the client
   const client = new DynamoDBClient();
+  const doc = DynamoDBDocumentClient.from(client)
 
   try {
-    const res = await client.send(
-      new PutItemCommand({
+    const res = await doc.send(
+      new PutCommand({
         TableName: process.env.SINGLE_TABLE_ID,
-        Item: marshall(item),
+        Item: item,
         ConditionExpression:
           "attribute_not_exists(PK) AND attribute_not_exists(SK)",
       })
@@ -74,7 +74,44 @@ const register = async (event) => {
   }
 };
 
+const get = async (event) => {
+  console.log("EVENT: " + JSON.stringify(event));
+  const userID = event.pathParameters.userID;
+
+  const client = new DynamoDBClient();
+  const doc = DynamoDBDocumentClient.from(client)
+  
+  try {
+    const res = await doc.send(new QueryCommand({
+      TableName: process.env.SINGLE_TABLE_ID,
+      KeyConditionExpression: "#PK = :PK",
+      ExpressionAttributeNames: {
+        "#PK": "PK",
+      },
+      ExpressionAttributeValues: {
+        ":PK": `USER#${userID}`,
+      },
+      Limit: 11,
+    }))
+    console.log(JSON.stringify(res))
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(res.Items),
+    };
+  } catch (err) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "Error while retrieving user and latest activity",
+        error: err,
+      }),
+    };
+  }
+};
+
 
 module.exports = {
   register,
+  get
 };

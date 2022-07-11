@@ -12,8 +12,8 @@ describe("An random user stumbles on my letterboxd ripoff", () => {
 
     expect(res).toMatchObject({
       message: expect.any(String),
-      endpoint: expect.any(String)
-    })
+      endpoint: expect.any(String),
+    });
   });
 
   it("Can register to the website by providing name and surname", async () => {
@@ -39,5 +39,36 @@ describe("An random user stumbles on my letterboxd ripoff", () => {
       reviewsCount: 0,
       listsCount: 0,
     });
+  });
+
+  it("Can see another user's profile", async () => {
+    const registerdRandomUser = await given.a_registered_random_user();
+    if (registerdRandomUser) {
+      const res = await httpCall(
+        HTTP_API_URL,
+        `/users/${registerdRandomUser.userID}`,
+        "GET",
+        null
+      );
+
+      //console.log(JSON.stringify(res));
+
+      for (const item of res) {
+        if (item.__typename === "USER") {
+          expect(item).toMatchObject({
+            PK: `USER#${registerdRandomUser.userID}`,
+            SK: `USER#${registerdRandomUser.userID}`,
+            __typename: "USER",
+            userID: registerdRandomUser.userID,
+            name: registerdRandomUser.name,
+            surname: registerdRandomUser.surname,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+            reviewsCount: expect.any(Number),
+            listsCount: expect.any(Number),
+          });
+        }
+      }
+    }
   });
 });

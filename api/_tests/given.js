@@ -41,9 +41,18 @@ const an_indexed_ugly_film = async () => {
   return null;
 };
 
+const a_film_review = (filmID) => {
+  return {
+    filmID: filmID,
+    description: chance.paragraph(),
+    rating: chance.integer({ min: 0, max: 10 }),
+  };
+};
+
 module.exports = {
   a_random_user,
   a_registered_random_user,
   an_ugly_film,
   an_indexed_ugly_film,
+  a_film_review
 };
