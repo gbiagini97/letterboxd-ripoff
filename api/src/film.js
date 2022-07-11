@@ -1,6 +1,6 @@
 "use strict";
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocumentClient, PutCommand, QueryCommand } = require("@aws-sdk/lib-dynamodb");
 const create = async (event) => {
   const body = JSON.parse(event.body);
 
@@ -60,6 +60,46 @@ const create = async (event) => {
   }
 };
 
+const get = async (event) => {
+  console.log("EVENT: " + JSON.stringify(event));
+  const filmID = event.pathParameters.filmID;
+
+  const client = new DynamoDBClient();
+  const doc = DynamoDBDocumentClient.from(client)
+  
+  try {
+    const res = await doc.send(new QueryCommand({
+      IndexName: "GSI1SK",
+      TableName: process.env.SINGLE_TABLE_ID,
+      KeyConditionExpression: "#SK = :SK",
+      ExpressionAttributeNames: {
+        "#SK": "SK",
+      },
+      ExpressionAttributeValues: {
+        ":SK": `FILM#${filmID}`,
+      },
+      Limit: 11,
+      ScanIndexForward: false
+    }))
+    console.log(JSON.stringify(res))
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(res.Items),
+    };
+  } catch (err) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "Error while retrieving user and latest activity",
+        error: err,
+      }),
+    };
+  }
+
+}
+
 module.exports = {
   create,
+  get
 };

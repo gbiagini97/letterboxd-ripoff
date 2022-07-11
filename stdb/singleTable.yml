@@ -28,6 +28,15 @@ Resources:
           Projection: 
             ProjectionType: ALL
 
+        - IndexName: GSI1SK
+          KeySchema: 
+            - AttributeName: SK
+              KeyType: HASH
+            - AttributeName: updatedAt
+              KeyType: RANGE
+          Projection: 
+            ProjectionType: ALL
+
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -35,6 +44,9 @@ Resources:
           AttributeType: S
         - AttributeName: __typename
           AttributeType: S
+        - AttributeName: updatedAt
+          AttributeType: S
+
 
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES

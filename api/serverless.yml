@@ -67,6 +67,18 @@ functions:
         Action:
           - dynamodb:PutItem
         Resource: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}
+  
+  getFilm:
+    handler: src/film.get
+    events:
+      - httpApi: "GET /film/{filmID}"
+    environment:
+      SINGLE_TABLE_ID: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableID}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:Query
+        Resource: !Sub ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}/index/GSI1SK
 
   ### REVIEWS
   createReview:
@@ -79,7 +91,7 @@ functions:
       - Effect: "Allow"
         Action:
           - dynamodb:PutItem
-          - dynamodb:ConditionCheckItem
+          - dynamodb:UpdateItem
         Resource: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}
 
 resources:

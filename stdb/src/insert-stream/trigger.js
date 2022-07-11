@@ -11,69 +11,65 @@ module.exports.handler = async (event) => {
 
   for (const record of event.Records) {
     const item = unmarshall(record.dynamodb.NewImage);
+    console.log(JSON.stringify(item));
 
     switch (item.__typename) {
       case "REVIEW":
         await updateFilmAndUser(item);
         break;
     }
-
-    console.log(JSON.stringify(item));
   }
 };
 
 async function updateFilmAndUser(review) {
-  console.log("REVIEW FLOW: " + JSON.stringify(review))
-  
+  console.log("REVIEW FLOW: " + JSON.stringify(review));
+
   const client = new DynamoDBClient();
   const doc = DynamoDBDocumentClient.from(client);
 
-  try {
-    const res = await doc.send(
-      new TransactWriteCommand({
-        TransactItems: [
-          {
-            Update: {
-              TableName: process.env.SINGLE_TABLE_ID,
-              Key: {
-                PK: review.SK,
-                SK: review.SK,
-              },
-              UpdateExpression:
-                "ADD #ratingSum :rating, #reviewsCount :one",
-              ExpressionAttributeNames: {
-                "#ratingSum": "ratingSum",
-                "#reviewsCount": "reviewsCount",
-              },
-              ExpressionAttributeValues: {
-                ":rating": review.rating,
-                ":one": 1,
-              },
+  const res = await doc.send(
+    new TransactWriteCommand({
+      TransactItems: [
+        {
+          Update: {
+            //update last update date for the film
+            TableName: process.env.SINGLE_TABLE_ID,
+            Key: {
+              PK: review.SK,
+              SK: review.SK,
             },
-          },
-          {
-            Update: {
-              TableName: process.env.SINGLE_TABLE_ID,
-              Key: {
-                PK: review.PK,
-                SK: review.PK,
-              },
-              UpdateExpression: "ADD #reviewsCount :one",
-              ExpressionAttributeNames: {
-                "#reviewsCount": "reviewsCount",
-              },
-              ExpressionAttributeValues: {
-                ":one": 1,
-              },
-              ConditionExpression:
-                "attribute_exists(PK) AND attribute_exists(SK)",
+            UpdateExpression: "SET #updatedAt = :updatedAt",
+            ExpressionAttributeNames: {
+              "#updatedAt": "updatedAt",
             },
+            ExpressionAttributeValues: {
+              ":updatedAt": new Date().toISOString(),
+            },
+            ConditionExpression:
+              "attribute_exists(PK) AND attribute_exists(SK)",
           },
-        ],
-      })
-    );
-    console.log("RES: " + JSON.stringify(res));
-  } catch (err) {
-    console.log("ERR: " + JSON.stringify(err));
-  }
+        },
+        {
+          Update: {
+            //update last update date for the user
+            TableName: process.env.SINGLE_TABLE_ID,
+            Key: {
+              PK: review.PK,
+              SK: review.PK,
+            },
+            UpdateExpression: "SET #updatedAt = :updatedAt",
+            ExpressionAttributeNames: {
+              "#updatedAt": "updatedAt",
+            },
+            ExpressionAttributeValues: {
+              ":updatedAt": new Date().toISOString(),
+            },
+            ConditionExpression:
+              "attribute_exists(PK) AND attribute_exists(SK)",
+          },
+        },
+      ],
+    })
+  );
+  console.log("RES: " + JSON.stringify(res));
 }
