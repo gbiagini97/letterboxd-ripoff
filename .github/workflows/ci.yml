@@ -25,13 +25,22 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Serverless Deploy
-        uses: serverless/github-action@v3.1
-        with:
-          args: serverless deploy --stage ${{ github.run_id }}
+      - name: Manually installing serverless framewrok
+        run: npm i -g serverless
+
+      - name: Deploy
+        run: serverless deploy --stage ${{ github.run_id }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      #- name: Serverless Deploy
+      #  uses: serverless/github-action@v3.1
+      #  with:
+      #    args: serverless deploy --stage ${{ github.run_id }}
+      #  env:
+      #    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Perform tests
         run: yarn test ${{ github.run_id }}
@@ -39,10 +48,16 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Serverless Remove
-        uses: serverless/github-action@v3.1
-        with:
-          args: serverless deploy --stage ${{ github.run_id }}
+      - name: Remove
+        run: serverless remove --stage ${{ github.run_id }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      #- name: Serverless Remove
+      #  uses: serverless/github-action@v3.1
+      #  with:
+      #    args: serverless deploy --stage ${{ github.run_id }}
+      #  env:
+      #    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
