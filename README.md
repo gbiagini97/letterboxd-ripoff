@@ -39,3 +39,17 @@ Functions are defined with the help of the following shorthands:
 ## 3. CI/CD setup
 I used Github Actions to perform CI/CD with two workflows `ci` and `deploy`.
 Added jest's github-action reporter to get the tests output printed in workflows.
+
+
+---
+
+## 4. Adding features
+Switched from default DynamoDBClient to DocumentClient that doesn't require marshaling.
+
+Added the following routes:
+* getUser: GET /users/{userID}
+* createReview: POST /users/{userID}/reviews
+
+Made use of single table design to make the GET routes return the object and the activity related to that object (gql style).
+
+Enabled dynamo streams to react at insert events and enhance the consistency between elements in it with aggregated data.
