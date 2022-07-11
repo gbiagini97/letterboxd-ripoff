@@ -1,0 +1,15 @@
+insertStream:
+  handler: src/insert-stream/trigger.handler
+  events:
+    - stream:
+        type: dynamodb
+        arn: !GetAtt SingleTable.StreamArn
+        filterPatterns:
+          - eventName: [INSERT]
+  environment:
+    SINGLE_TABLE_ID: !Ref SingleTable
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:UpdateItem
+      Resource: !GetAtt SingleTable.Arn

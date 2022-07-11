@@ -1,6 +1,10 @@
 service: stdb
-frameworkVersion: '3'
+frameworkVersion: "3"
 useDotenv: true
+
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
 
 provider:
   name: aws
@@ -8,6 +12,17 @@ provider:
   stage: ${opt:stage, env:AWS_STAGE, 'dev'}
   region: ${opt:region, env:AWS_REGION, 'eu-central-1'}
   stackName: ${self:service}-${self:provider.stage}
+
+custom:
+  webpack:
+    webpackConfig: webpack.config.js
+    packager: "yarn"
+    includeModules:
+      forceExclude:
+        - aws-sdk
+
+functions:
+  - ${file(src/insert-stream/trigger.yml)}
 
 resources:
   - ${file(singleTable.yml)}
@@ -17,9 +32,7 @@ resources:
         Value: ${opt:region, self:provider.region}
       SingleTableID:
         Value: !Ref SingleTable
-      SingleTableArn: 
+      SingleTableArn:
         Value: !GetAtt SingleTable.Arn
-      CFStack: 
+      CFStack:
         Value: ${self:provider.stackName}
-        
-      

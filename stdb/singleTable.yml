@@ -35,3 +35,6 @@ Resources:
           AttributeType: S
         - AttributeName: __typename
           AttributeType: S
+
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
