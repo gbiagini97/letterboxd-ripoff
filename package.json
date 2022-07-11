@@ -6,9 +6,13 @@
   "author": "Gabriele Biagini <gbiagini97@gmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "test": "cd api && yarn export-env && yarn test-ci"
+  },
   "dependencies": {
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.848.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^8.2.5",
     "chance": "^1.1.8",
     "dotenv": "^16.0.1",
@@ -18,10 +22,10 @@
     "webpack-node-externals": "^3.0.0"
   },
   "devDependencies": {
-    "@serverless/compose": "^1.2.4",
     "@aws-sdk/client-cloudformation": "^3.121.0",
     "@aws-sdk/client-dynamodb": "^3.121.0",
     "@aws-sdk/util-dynamodb": "^3.121.0",
+    "@serverless/compose": "^1.2.4",
     "jest": "^28.1.2",
     "serverless-iam-roles-per-function": "^3.2.0"
   },

@@ -10,7 +10,8 @@
     "export-env": "node _scripts/export-env.js",
     "deploy": "sls deploy",
     "remove": "sls remove",
-    "test": "jest"
+    "test": "jest -watchAll",
+    "test-ci": "jest --forceExit"
   },
   "dependencies": {
     "aws": "^0.0.3-2",
