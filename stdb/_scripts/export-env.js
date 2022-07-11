@@ -5,11 +5,11 @@ const {
 const fs = require("fs");
 
 async function main() {
-  const stage = process.argv[3] || "dev";
+  const stage = process.argv[2] || "dev";
   const service = process.argv[4] || "stdb";
 
   const client = new CloudFormationClient({
-    region: process.argv[2] || "eu-central-1",
+    region: process.argv[3] || "eu-central-1",
   });
   const command = new DescribeStacksCommand({
     StackName: `${service}-${stage}`,
