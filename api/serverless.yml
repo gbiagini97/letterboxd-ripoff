@@ -1,0 +1,50 @@
+service: api
+frameworkVersion: "3"
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, env:AWS_STAGE, 'dev'}
+  region: ${opt:region, env:AWS_REGION, 'eu-central-1'}
+  stackName: ${self:service}-${self:provider.stage}
+
+  environment:
+    STDB_CF_STACK: ${param:STDB_CF_STACK}
+
+functions:
+  home:
+    handler: src/home.handler
+    events:
+      - httpApi: "GET /"
+
+  ### USERS
+  registerUser:
+    handler: src/user.register
+    events:
+      - httpApi: "POST /register"
+    environment:
+      SINGLE_TABLE_ID: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableID}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:PutItem
+        Resource: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}
+
+  ### FILM
+  createFilm:
+    handler: src/film.create
+    events:
+      - httpApi: "POST /film"
+    environment:
+      SINGLE_TABLE_ID: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableID}
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - dynamodb:PutItem
+        Resource: ${cf:${self:provider.environment.STDB_CF_STACK}.SingleTableArn}
+
+resources:
+  - Outputs:
+      AwsRegion:
+        Value: ${opt:region, self:provider.region}
