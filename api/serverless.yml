@@ -2,6 +2,10 @@ service: api
 frameworkVersion: "3"
 useDotenv: true
 
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -11,6 +15,15 @@ provider:
 
   environment:
     STDB_CF_STACK: ${param:STDB_CF_STACK}
+
+
+custom:
+  webpack:
+    webpackConfig: webpack.config.js
+    packager: "yarn"
+    includeModules:
+      forceExclude:
+          - aws-sdk
 
 functions:
   home:
