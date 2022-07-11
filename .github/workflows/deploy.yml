@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - 3-cicd-setup
+      - main
 
 jobs:
   deploy:
