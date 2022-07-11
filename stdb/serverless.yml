@@ -1,0 +1,25 @@
+service: stdb
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, env:AWS_STAGE, 'dev'}
+  region: ${opt:region, env:AWS_REGION, 'eu-central-1'}
+  stackName: ${self:service}-${self:provider.stage}
+
+resources:
+  - ${file(singleTable.yml)}
+
+  - Outputs:
+      AwsRegion:
+        Value: ${opt:region, self:provider.region}
+      SingleTableID:
+        Value: !Ref SingleTable
+      SingleTableArn: 
+        Value: !GetAtt SingleTable.Arn
+      CFStack: 
+        Value: ${self:provider.stackName}
+        
+      
