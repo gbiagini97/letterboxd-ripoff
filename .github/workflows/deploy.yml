@@ -22,12 +22,14 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - run: yarn install --frozen-lockfile
+    - name: Manually install Serverless Framewrok
+      run: yarn global add serverless
 
-    - name: serverless deploy
-      uses: serverless/github-action@v3.1
-      with:
-        args: deploy
+    - name: Install project dependencies
+      run: yarn install --frozen-lockfile
+
+    - name: Serverless deploy Deploy on ephemeral environment
+      run: serverless deploy
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
