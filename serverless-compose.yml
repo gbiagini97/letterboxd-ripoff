@@ -1,0 +1,8 @@
+services:
+  stdb:
+    path: stdb
+
+  api:
+    path: api
+    params:
+      STDB_CF_STACK: ${stdb.CFStack}

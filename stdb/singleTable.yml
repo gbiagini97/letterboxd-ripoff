@@ -1,0 +1,52 @@
+Resources:
+  SingleTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+
+      LocalSecondaryIndexes:
+        - IndexName: LSI1PK
+          KeySchema:
+            - AttributeName: PK
+              KeyType: HASH
+            - AttributeName: __typename
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      GlobalSecondaryIndexes:
+        - IndexName: invertedKeys
+          KeySchema: 
+            - AttributeName: SK
+              KeyType: HASH
+            - AttributeName: PK
+              KeyType: RANGE
+          Projection: 
+            ProjectionType: ALL
+
+        - IndexName: GSI1SK
+          KeySchema: 
+            - AttributeName: SK
+              KeyType: HASH
+            - AttributeName: updatedAt
+              KeyType: RANGE
+          Projection: 
+            ProjectionType: ALL
+
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: __typename
+          AttributeType: S
+        - AttributeName: updatedAt
+          AttributeType: S
+
+
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
